@@ -96,6 +96,8 @@ export default function SignUpPage() {
         });
 
         setStep("verification");
+        // The email verification is now handled automatically by Better Auth
+        // when sendOnSignUp is enabled in the server configuration
       }
     } catch (error) {
       const errorMessage = formatError(error);
@@ -140,6 +142,10 @@ export default function SignUpPage() {
     if (!email) return;
 
     try {
+      await authClient.sendVerificationEmail({
+        email: email,
+        callbackURL: "/dashboard",
+      });
       toast.success("Verification email sent!", {
         description: "Please check your inbox for the verification link.",
       });
@@ -331,7 +337,7 @@ export default function SignUpPage() {
         <div className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link
-            href="/auth/signin"
+            href="/sign-in"
             className="font-medium text-primary hover:underline transition-colors"
           >
             Sign in

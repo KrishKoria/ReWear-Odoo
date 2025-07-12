@@ -244,6 +244,15 @@ export default function SignInPage() {
           >
             Sign in
           </LoadingButton>
+
+          <div className="text-center">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-primary hover:underline transition-colors"
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </form>
 
         <div className="text-center text-sm text-muted-foreground">
