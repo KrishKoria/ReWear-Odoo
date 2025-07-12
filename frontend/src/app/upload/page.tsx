@@ -15,19 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import {
-  Upload,
-  X,
-  Plus,
-  ArrowLeft,
-  Camera,
-  Package,
-  Coins,
-} from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Upload, X, Camera, Coins } from "lucide-react";
 import { authClient } from "@/lib/authclient";
 import Image from "next/image";
-import Link from "next/link";
 import Navigation from "@/components/navigation";
 
 interface Category {
@@ -52,6 +42,7 @@ export default function UploadPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -107,6 +98,7 @@ export default function UploadPage() {
   };
 
   const fetchCategories = async () => {
+    setCategoriesLoading(true);
     try {
       const response = await fetch("/api/categories");
       if (response.ok) {
@@ -115,6 +107,8 @@ export default function UploadPage() {
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
+    } finally {
+      setCategoriesLoading(false);
     }
   };
 
@@ -130,14 +124,12 @@ export default function UploadPage() {
       return;
     }
 
-    // Validate file types and sizes
     const validFiles = files.filter((file) => {
       if (!file.type.startsWith("image/")) {
         toast.error(`${file.name} is not a valid image file`);
         return false;
       }
       if (file.size > 5 * 1024 * 1024) {
-        // 5MB limit
         toast.error(`${file.name} is too large. Maximum size is 5MB`);
         return false;
       }
@@ -146,11 +138,9 @@ export default function UploadPage() {
 
     if (validFiles.length === 0) return;
 
-    // Create preview URLs
     const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
     setImagePreviews((prev) => [...prev, ...newPreviews]);
 
-    // Add files to form data
     setFormData((prev) => ({
       ...prev,
       images: [...prev.images, ...validFiles],
@@ -158,7 +148,6 @@ export default function UploadPage() {
   };
 
   const removeImage = (index: number) => {
-    // Clean up the preview URL
     URL.revokeObjectURL(imagePreviews[index]);
 
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
@@ -203,8 +192,6 @@ export default function UploadPage() {
     setIsSubmitting(true);
 
     try {
-      // For now, we'll just use placeholder URLs for images
-      // In a real app, you'd upload images to a storage service first
       const imageUrls = formData.images.map(
         (_, index) =>
           `/placeholder.svg?height=400&width=300&text=Image${index + 1}`
@@ -263,7 +250,6 @@ export default function UploadPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Image Upload */}
                 <div>
                   <Label htmlFor="images">Images (Max 5)</Label>
                   <div className="mt-2">
@@ -329,20 +315,31 @@ export default function UploadPage() {
                   <div>
                     <Label htmlFor="category">Category *</Label>
                     <Select
-                      value={formData.categoryId}
+                      value={formData.categoryId || ""}
                       onValueChange={(value) =>
                         handleInputChange("categoryId", value)
                       }
+                      disabled={categoriesLoading}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
+                        {categoriesLoading ? (
+                          <SelectItem value="loading" disabled>
+                            Loading categories...
                           </SelectItem>
-                        ))}
+                        ) : categories.length === 0 ? (
+                          <SelectItem value="none" disabled>
+                            No categories found
+                          </SelectItem>
+                        ) : (
+                          categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -439,7 +436,6 @@ export default function UploadPage() {
                 <div>
                   <Label htmlFor="pointValue">Point Value *</Label>
                   <div className="relative">
-                    <Coins className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="pointValue"
                       type="number"
