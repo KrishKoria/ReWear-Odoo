@@ -47,11 +47,13 @@ export default function Navigation({
       try {
         const session = await authClient.getSession();
         if (session.data) {
+          // Fetch complete user data with role from database
           const userResponse = await fetch(`/api/user/profile`);
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData.user);
           } else {
+            // Fallback to session user if API call fails
             setUser(session.data.user);
           }
         }
@@ -64,6 +66,7 @@ export default function Navigation({
 
     checkAuth();
   }, []);
+
   const handleSignOut = async () => {
     try {
       await authClient.signOut();

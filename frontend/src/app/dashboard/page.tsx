@@ -174,13 +174,13 @@ export default function DashboardPage() {
           {/* Recent Items and Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Recent Items */}
-            <Card className="bg-gradient-to-br from-gray-900/80 via-emerald-900/70 to-teal-900/80 dark:bg-gray-900/90 border border-emerald-600 shadow-lg rounded-2xl">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 hover:shadow-lg transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center text-white">
                   <Package className="h-5 w-5 mr-2 text-emerald-400" />
                   Recent Items
                 </CardTitle>
-                <p className="text-sm text-emerald-200">
+                <p className="text-sm text-gray-600">
                   Your latest clothing items
                 </p>
               </CardHeader>
@@ -238,7 +238,7 @@ export default function DashboardPage() {
             </Card>
 
             {/* Recent Activity */}
-            <Card className=" bg-emerald-700/80 border border-emerald-600 shadow-lg rounded-2xl">
+            <Card className=" bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 hover:shadow-lg transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center text-white">
                   <Activity className="h-5 w-5 mr-2 text-emerald-400" />
