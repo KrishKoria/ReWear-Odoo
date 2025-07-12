@@ -1,3 +1,15 @@
+// Shared types for item enums
+export type ItemCondition = "excellent" | "good" | "fair" | "poor";
+export type ItemSize =
+  | "xs"
+  | "s"
+  | "m"
+  | "l"
+  | "xl"
+  | "xxl"
+  | "xxxl"
+  | "one-size";
+export type ItemStatus = "available" | "reserved" | "swapped" | "removed";
 import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 import {
   user,

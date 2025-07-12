@@ -54,9 +54,9 @@ export default function BrowsePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedCondition, setSelectedCondition] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCondition, setSelectedCondition] = useState("all");
+  const [selectedSize, setSelectedSize] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -95,10 +95,12 @@ export default function BrowsePage() {
         sortOrder: "desc",
       });
 
-      if (search) params.append("search", search);
-      if (selectedCategory) params.append("category", selectedCategory);
-      if (selectedCondition) params.append("condition", selectedCondition);
-      if (selectedSize) params.append("size", selectedSize);
+      if (search) params.append("search", search.toLowerCase());
+      if (selectedCategory !== "all")
+        params.append("category", selectedCategory);
+      if (selectedCondition !== "all")
+        params.append("condition", selectedCondition);
+      if (selectedSize !== "all") params.append("size", selectedSize);
 
       const response = await fetch(`/api/items?${params}`);
       if (response.ok) {
@@ -121,9 +123,9 @@ export default function BrowsePage() {
 
   const clearFilters = () => {
     setSearch("");
-    setSelectedCategory("");
-    setSelectedCondition("");
-    setSelectedSize("");
+    setSelectedCategory("all");
+    setSelectedCondition("all");
+    setSelectedSize("all");
     setSortBy("createdAt");
     setPage(1);
   };
@@ -137,12 +139,12 @@ export default function BrowsePage() {
         <div className="mb-8 space-y-4">
           <form onSubmit={handleSearch} className="flex gap-2">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search items..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 border-emerald-200 dark:border-emerald-700 focus:border-emerald-400 focus:ring-emerald-400"
+                className="pl-10 border-emerald-200 dark:border-emerald-700 focus:border-emerald-400 focus:ring-emerald-400 h-10"
+                style={{ paddingLeft: "2.5rem" }}
               />
             </div>
             <Button
@@ -179,7 +181,7 @@ export default function BrowsePage() {
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
                         {category.name}
@@ -204,7 +206,7 @@ export default function BrowsePage() {
                     <SelectValue placeholder="All Conditions" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Conditions</SelectItem>
+                    <SelectItem value="all">All Conditions</SelectItem>
                     {conditions.map((condition) => (
                       <SelectItem key={condition} value={condition}>
                         {condition.charAt(0).toUpperCase() + condition.slice(1)}
@@ -226,7 +228,7 @@ export default function BrowsePage() {
                     <SelectValue placeholder="All Sizes" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Sizes</SelectItem>
+                    <SelectItem value="all">All Sizes</SelectItem>
                     {sizes.map((size) => (
                       <SelectItem key={size} value={size}>
                         {size.toUpperCase()}
@@ -270,7 +272,7 @@ export default function BrowsePage() {
 
         {/* Items Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
             {[...Array(8)].map((_, i) => (
               <Card
                 key={i}
@@ -293,29 +295,48 @@ export default function BrowsePage() {
               {items.map((item) => (
                 <Card
                   key={item.id}
-                  className="group hover:shadow-lg transition-shadow cursor-pointer bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 hover:border-emerald-200 dark:hover:border-emerald-700"
+                  className="group flex flex-col h-full border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow cursor-pointer p-4"
                 >
-                  <CardHeader className="pb-3">
-                    <div className="relative h-48 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg overflow-hidden">
-                      {item.images && item.images.length > 0 ? (
-                        <Image
-                          src={item.images[0]}
-                          alt={item.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : null}
+                  <div className="flex justify-center items-center mb-4 h-40 w-full bg-emerald-50 dark:bg-emerald-900/10 rounded-lg overflow-hidden">
+                    {item.images && item.images.length > 0 && item.images[0] ? (
+                      <Image
+                        src={
+                          item.images[0].startsWith("/")
+                            ? item.images[0]
+                            : `/uploads/${item.images[0]}`
+                        }
+                        alt={item.title}
+                        width={160}
+                        height={160}
+                        className="object-contain h-36 w-36"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-36 w-36 text-gray-400 border border-dashed border-gray-300 rounded-lg">
+                        No Image
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <div
+                        className="text-base font-semibold mb-1 text-gray-900 dark:text-white truncate"
+                        title={item.title}
+                      >
+                        {item.title}
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+                        {item.description}
+                      </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <div className="text-sm font-medium">{item.title}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {item.description}
+                    <div className="flex items-center justify-between mt-2">
+                      <Badge className="bg-emerald-500 text-white px-2 py-1 text-xs font-medium">
+                        {item.pointValue} pts
+                      </Badge>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {item.size.toUpperCase()}
+                      </span>
                     </div>
-                    <div className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                      {item.price} points
-                    </div>
-                  </CardContent>
+                  </div>
                 </Card>
               ))}
             </div>

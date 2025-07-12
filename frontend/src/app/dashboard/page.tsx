@@ -39,15 +39,48 @@ export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    swaps: 0,
+    points: 0,
+    items: 0,
+    favorites: 0,
+  });
+  const [recentItems, setRecentItems] = useState<any[]>([]);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const fetchDashboardData = async () => {
       try {
         const session = await authClient.getSession();
         if (!session.data) {
           router.push("/sign-in");
-        } else {
-          setUser(session.data.user);
+          return;
+        }
+        setUser(session.data.user);
+
+        // Fetch stats
+        const statsRes = await fetch(`/api/user/stats`);
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          setStats(statsData);
+        }
+
+        // Fetch recent items
+        const itemsRes = await fetch(
+          `/api/items?userId=${session.data.user.id}&limit=5&sortBy=createdAt&sortOrder=desc`
+        );
+        if (itemsRes.ok) {
+          const itemsData = await itemsRes.json();
+          setRecentItems(itemsData.items || []);
+        }
+
+        // Fetch recent activity (swaps/transactions)
+        const activityRes = await fetch(
+          `/api/user/activity?userId=${session.data.user.id}&limit=5`
+        );
+        if (activityRes.ok) {
+          const activityData = await activityRes.json();
+          setRecentActivity(activityData.activity || []);
         }
       } catch (error) {
         router.push("/sign-in");
@@ -55,8 +88,7 @@ export default function DashboardPage() {
         setIsLoading(false);
       }
     };
-
-    checkAuth();
+    fetchDashboardData();
   }, [router]);
 
   const handleSignOut = async () => {
@@ -104,7 +136,7 @@ export default function DashboardPage() {
                       Total Swaps
                     </p>
                     <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      0
+                      {stats.swaps}
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -113,7 +145,6 @@ export default function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
-
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -122,7 +153,7 @@ export default function DashboardPage() {
                       Points Balance
                     </p>
                     <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      0
+                      {stats.points}
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -131,7 +162,6 @@ export default function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
-
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -140,7 +170,7 @@ export default function DashboardPage() {
                       My Items
                     </p>
                     <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      0
+                      {stats.items}
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -149,7 +179,6 @@ export default function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
-
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -158,7 +187,7 @@ export default function DashboardPage() {
                       Favorites
                     </p>
                     <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      0
+                      {stats.favorites}
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -183,23 +212,59 @@ export default function DashboardPage() {
                 </p>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Package className="w-8 h-8 text-gray-400" />
+                {recentItems.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Package className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">
+                      No items yet
+                    </p>
+                    <Button
+                      asChild
+                      className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
+                    >
+                      <Link href="/upload">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Your First Item
+                      </Link>
+                    </Button>
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400 mb-4">
-                    No items yet
-                  </p>
-                  <Button
-                    asChild
-                    className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
-                  >
-                    <Link href="/upload">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Your First Item
-                    </Link>
-                  </Button>
-                </div>
+                ) : (
+                  <div className="space-y-4">
+                    {recentItems.map((item) => (
+                      <Card
+                        key={item.id}
+                        className="border border-emerald-100 dark:border-emerald-800"
+                      >
+                        <CardContent className="flex items-center space-x-4 p-4">
+                          <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                            {item.images && item.images.length > 0 ? (
+                              <img
+                                src={item.images[0]}
+                                alt={item.title}
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <Package className="w-8 h-8 text-gray-400" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-lg text-gray-900 dark:text-white">
+                              {item.title}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {item.description}
+                            </p>
+                          </div>
+                          <Badge className="bg-emerald-500 text-white">
+                            {item.pointValue} pts
+                          </Badge>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -215,14 +280,42 @@ export default function DashboardPage() {
                 </p>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Activity className="w-8 h-8 text-gray-400" />
+                {recentActivity.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Activity className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      No activity yet
+                    </p>
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    No activity yet
-                  </p>
-                </div>
+                ) : (
+                  <div className="space-y-4">
+                    {recentActivity.map((act, idx) => (
+                      <Card
+                        key={idx}
+                        className="border border-emerald-100 dark:border-emerald-800"
+                      >
+                        <CardContent className="flex items-center space-x-4 p-4">
+                          <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center">
+                            <Activity className="w-6 h-6 text-emerald-600" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 dark:text-white">
+                              {act.type}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {act.description}
+                            </p>
+                          </div>
+                          <Badge className="bg-emerald-500 text-white">
+                            {act.points} pts
+                          </Badge>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

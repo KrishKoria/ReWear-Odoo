@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { items } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { and, asc, desc, eq, like } from "drizzle-orm";
+import { and, asc, desc, eq, ilike } from "drizzle-orm";
+import { ItemCondition, ItemSize } from "@/db/types";
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     const conditions = [];
 
     if (search) {
-      conditions.push(like(items.title, `%${search}%`));
+      conditions.push(ilike(items.title, `%${search}%`));
     }
 
     if (category) {
@@ -103,20 +104,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const {
-      title,
-      description,
-      condition,
-      size,
-      brand,
-      color,
-      pointValue,
-      images,
-      categoryId,
-    } = body;
+    const formData = await request.formData();
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const condition = formData.get("condition") as string;
+    const size = formData.get("size") as string;
+    const brand = formData.get("brand") as string;
+    const color = formData.get("color") as string;
+    const pointValue = parseInt(formData.get("pointValue") as string);
+    const categoryId = formData.get("categoryId") as string;
 
-    // Validate required fields
     if (
       !title ||
       !description ||
@@ -131,21 +128,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Handle image uploads
+    const images: string[] = [];
+    const uploadDir = "public/uploads";
+    // @ts-ignore
+    const imageFiles = formData.getAll("images");
+    for (const file of imageFiles) {
+      if (typeof file === "object" && file.arrayBuffer) {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const ext = file.name.split(".").pop() || "jpg";
+        const filename = `${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2)}.${ext}`;
+        const fs = require("fs");
+        const path = require("path");
+        const savePath = path.join(process.cwd(), uploadDir, filename);
+        // Ensure uploads dir exists
+        if (!fs.existsSync(path.join(process.cwd(), uploadDir))) {
+          fs.mkdirSync(path.join(process.cwd(), uploadDir), {
+            recursive: true,
+          });
+        }
+        fs.writeFileSync(savePath, buffer);
+        images.push(`/uploads/${filename}`);
+      }
+    }
+
     const newItem = await db
       .insert(items)
       .values({
         id: crypto.randomUUID(),
         title,
         description,
-        condition,
-        size,
+        condition: condition as ItemCondition,
+        size: size as ItemSize,
         brand,
         color,
         pointValue,
-        images: images || [],
+        images,
         categoryId,
         userId: session.user.id,
-        status: "available",
+        status: "available" as "available",
+        createdAt: new Date(),
+        updatedAt: new Date(),
       })
       .returning();
 

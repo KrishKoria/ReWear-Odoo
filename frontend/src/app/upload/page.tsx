@@ -192,21 +192,22 @@ export default function UploadPage() {
     setIsSubmitting(true);
 
     try {
-      const imageUrls = formData.images.map(
-        (_, index) =>
-          `/placeholder.svg?height=400&width=300&text=Image${index + 1}`
-      );
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("description", formData.description);
+      data.append("condition", formData.condition);
+      data.append("size", formData.size);
+      data.append("brand", formData.brand);
+      data.append("color", formData.color);
+      data.append("pointValue", formData.pointValue);
+      data.append("categoryId", formData.categoryId);
+      formData.images.forEach((file, idx) => {
+        data.append("images", file, file.name);
+      });
 
       const response = await fetch("/api/items", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          pointValue: parseInt(formData.pointValue),
-          images: imageUrls,
-        }),
+        body: data,
       });
 
       if (response.ok) {
