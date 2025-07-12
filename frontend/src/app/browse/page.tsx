@@ -271,75 +271,140 @@ export default function BrowsePage() {
 
         {/* Items Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
-            {[...Array(8)].map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            {[...Array(12)].map((_, i) => (
               <Card
                 key={i}
-                className="animate-pulse bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800"
+                className="animate-pulse bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 overflow-hidden"
               >
-                <CardHeader className="pb-3">
-                  <div className="h-48 bg-emerald-100 dark:bg-emerald-900/20 rounded-lg" />
-                </CardHeader>
-                <CardContent className="space-y-2">
+                <div className="aspect-square bg-emerald-100 dark:bg-emerald-900/20" />
+                <CardContent className="p-4 space-y-2">
                   <div className="h-4 bg-emerald-100 dark:bg-emerald-900/20 rounded w-3/4" />
-                  <div className="h-4 bg-emerald-100 dark:bg-emerald-900/20 rounded w-1/2" />
-                  <div className="h-4 bg-emerald-100 dark:bg-emerald-900/20 rounded w-1/4" />
+                  <div className="h-3 bg-emerald-100 dark:bg-emerald-900/20 rounded w-1/2" />
+                  <div className="h-3 bg-emerald-100 dark:bg-emerald-900/20 rounded w-1/4" />
                 </CardContent>
               </Card>
             ))}
           </div>
+        ) : items.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="text-gray-500 dark:text-gray-400 text-lg mb-4">
+              No items found
+            </div>
+            <Button
+              variant="outline"
+              onClick={clearFilters}
+              className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+            >
+              Clear Filters
+            </Button>
+          </div>
         ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {items.map((item) => (
-                <Card
-                  key={item.id}
-                  className="group flex flex-col h-full border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow cursor-pointer p-4"
-                >
-                  <div className="flex justify-center items-center mb-4 h-40 w-full bg-emerald-50 dark:bg-emerald-900/10 rounded-lg overflow-hidden">
-                    {item.images && item.images.length > 0 && item.images[0] ? (
-                      <Image
-                        src={
-                          item.images[0].startsWith("/")
-                            ? item.images[0]
-                            : `/uploads/${item.images[0]}`
-                        }
-                        alt={item.title}
-                        width={160}
-                        height={160}
-                        className="object-contain h-36 w-36"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-36 w-36 text-gray-400 border border-dashed border-gray-300 rounded-lg">
-                        No Image
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            {items.map((item) => (
+              <Card
+                key={item.id}
+                className="group overflow-hidden border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm bg-white dark:bg-gray-900 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                onClick={() => router.push(`/item/${item.id}`)}
+              >
+                {/* Image */}
+                <div className="aspect-square relative bg-emerald-50 dark:bg-emerald-900/10 overflow-hidden">
+                  {item.images && item.images.length > 0 && item.images[0] ? (
+                    <Image
+                      src={
+                        item.images[0].startsWith("/")
+                          ? item.images[0]
+                          : `/uploads/${item.images[0]}`
+                      }
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-full text-gray-400">
+                      <div className="text-center">
+                        <div className="text-2xl mb-2">📷</div>
+                        <div className="text-xs">No Image</div>
                       </div>
-                    )}
+                    </div>
+                  )}
+                  {/* Condition Badge */}
+                  <div className="absolute top-2 left-2">
+                    <Badge
+                      variant="secondary"
+                      className="text-xs bg-white/90 text-gray-800 border-0"
+                    >
+                      {item.condition.charAt(0).toUpperCase() +
+                        item.condition.slice(1)}
+                    </Badge>
                   </div>
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <div
-                        className="text-base font-semibold mb-1 text-gray-900 dark:text-white truncate"
+                </div>
+
+                {/* Product Details */}
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    {/* Title */}
+                    <div className="min-h-[2.75rem] flex items-start">
+                      <h3
+                        className="font-semibold text-sm text-gray-900 dark:text-white line-clamp-2 leading-tight"
                         title={item.title}
                       >
                         {item.title}
-                      </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
-                        {item.description}
-                      </div>
+                      </h3>
                     </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <Badge className="bg-emerald-500 text-white px-2 py-1 text-xs font-medium">
-                        {item.pointValue} pts
+
+                    {/* Brand */}
+                    {item.brand && (
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-gray-400">by</span>
+                        <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 truncate">
+                          {item.brand}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Size and Color Tags */}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Badge
+                        variant="outline"
+                        className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-700"
+                      >
+                        Size {item.size.toUpperCase()}
                       </Badge>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {item.size.toUpperCase()}
-                      </span>
+                      {item.color && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-700"
+                        >
+                          {item.color}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Points and Date */}
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+                      <div className="flex items-center gap-1">
+                        <Badge className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-3 py-1 text-xs font-semibold shadow-sm">
+                          🪙 {item.pointValue} pts
+                        </Badge>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs text-gray-400 block">
+                          {new Date(item.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
-          </>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
       </main>
     </div>
