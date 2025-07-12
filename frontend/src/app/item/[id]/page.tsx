@@ -86,7 +86,7 @@ export default function ItemDetailPage() {
 
         if (data.userId) {
           try {
-            const ownerResponse = await fetch(`/api/users/${data.userId}`);
+            const ownerResponse = await fetch(`/api/user/${data.userId}`);
             if (ownerResponse.ok) {
               const ownerData = await ownerResponse.json();
               setItemOwner(ownerData);
@@ -237,7 +237,7 @@ export default function ItemDetailPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <div className="relative h-96 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <div className="relative h-96 min-h-[24rem] h-full bg-gray-100 dark:bg-gray-800 rounded-lg">
               {item.images && item.images.length > 0 ? (
                 <>
                   <Image
@@ -248,7 +248,7 @@ export default function ItemDetailPage() {
                     }
                     alt={item.title}
                     fill
-                    className="object-cover"
+                    className="object-cover z-10"
                     onError={(e) => {
                       console.error(
                         "Image failed to load:",

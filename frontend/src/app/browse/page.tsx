@@ -308,7 +308,7 @@ export default function BrowsePage() {
                 onClick={() => router.push(`/item/${item.id}`)}
               >
                 {/* Image */}
-                <div className="aspect-square relative bg-emerald-50 dark:bg-emerald-900/10 overflow-hidden">
+                <div className="aspect-square h-full relative bg-emerald-50 dark:bg-emerald-900/10 overflow-hidden">
                   {item.images && item.images.length > 0 && item.images[0] ? (
                     <Image
                       src={

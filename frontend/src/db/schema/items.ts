@@ -58,14 +58,3 @@ export const items = pgTable("items", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
-
-export const itemImages = pgTable("item_images", {
-  id: text("id").primaryKey(),
-  itemId: text("item_id")
-    .notNull()
-    .references(() => items.id, { onDelete: "cascade" }),
-  imageUrl: text("image_url").notNull(),
-  altText: varchar("alt_text", { length: 255 }),
-  isPrimary: integer("is_primary").notNull().default(0), // 1 for primary image, 0 for others
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});

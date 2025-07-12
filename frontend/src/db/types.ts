@@ -1,3 +1,5 @@
+// Ensure Item type is available for ItemWithCategory and SwapWithDetails
+export type Item = InferSelectModel<typeof items>;
 // Shared types for item enums
 export type ItemCondition = "excellent" | "good" | "fair" | "poor";
 export type ItemSize =
@@ -18,7 +20,6 @@ import {
   verification,
   categories,
   items,
-  itemImages,
   swaps,
   pointTransactions,
   pointRedemptions,
@@ -40,12 +41,6 @@ export type NewVerification = InferInsertModel<typeof verification>;
 export type Category = InferSelectModel<typeof categories>;
 export type NewCategory = InferInsertModel<typeof categories>;
 
-export type Item = InferSelectModel<typeof items>;
-export type NewItem = InferInsertModel<typeof items>;
-
-export type ItemImage = InferSelectModel<typeof itemImages>;
-export type NewItemImage = InferInsertModel<typeof itemImages>;
-
 export type Swap = InferSelectModel<typeof swaps>;
 export type NewSwap = InferInsertModel<typeof swaps>;
 
@@ -57,7 +52,7 @@ export type NewPointRedemption = InferInsertModel<typeof pointRedemptions>;
 
 export type ItemWithCategory = Item & {
   category: Category;
-  images: ItemImage[];
+  images: string[];
   user: Pick<User, "id" | "name" | "image">;
 };
 

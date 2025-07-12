@@ -3,7 +3,7 @@ export * from "./items";
 export * from "./swaps";
 
 import { user, session, account, verification } from "./auth-schema";
-import { categories, items, itemImages } from "./items";
+import { categories, items } from "./items";
 import { swaps, pointTransactions, pointRedemptions } from "./swaps";
 
 export const schema = {
@@ -14,7 +14,6 @@ export const schema = {
 
   categories,
   items,
-  itemImages,
 
   swaps,
   pointTransactions,
