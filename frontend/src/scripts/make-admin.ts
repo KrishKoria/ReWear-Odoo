@@ -11,7 +11,6 @@ async function makeUserAdmin() {
       .set({ role: "admin" })
       .where(eq(user.email, ADMIN_EMAIL))
       .returning();
-
     if (result.length > 0) {
       console.log(`Successfully made ${ADMIN_EMAIL} an admin`);
       console.log(result[0]);
