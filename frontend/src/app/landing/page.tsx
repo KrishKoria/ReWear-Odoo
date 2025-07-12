@@ -86,12 +86,12 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 transition-colors duration-300 scroll-smooth">
-      <header className="fixed top-0 w-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-enhanced border-b border-emerald-100 dark:border-emerald-800 z-50 transition-all duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 transition-colors duration-300">
+      <header className="fixed top-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-emerald-100 dark:border-emerald-800 z-50 transition-all duration-300">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center space-x-2 group">
-              <div className="w-8 h-8 gradient-emerald rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <Link href="/landing" className="flex items-center space-x-2 group">
+              <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <Recycle className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
@@ -108,7 +108,7 @@ export default function Landing() {
                 How It Works
               </Link>
               <Link
-                href="#browse"
+                href="/browse"
                 className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
               >
                 Browse Items
@@ -121,13 +121,19 @@ export default function Landing() {
               </Link>
               <ThemeToggle />
               <Button
+                asChild
                 variant="outline"
-                className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-300 bg-transparent focus-ring"
+                size="sm"
+                className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
               >
-                Sign In
+                <Link href="/sign-in">Sign In</Link>
               </Button>
-              <Button className="gradient-emerald hover:gradient-emerald-dark text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus-ring">
-                Join ReWear
+              <Button
+                asChild
+                size="sm"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <Link href="/sign-up">Join ReWear</Link>
               </Button>
             </nav>
 
@@ -135,7 +141,7 @@ export default function Landing() {
               <ThemeToggle />
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors duration-300 focus-ring"
+                className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors duration-300"
               >
                 {isMenuOpen ? (
                   <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
@@ -156,7 +162,7 @@ export default function Landing() {
                   How It Works
                 </Link>
                 <Link
-                  href="#browse"
+                  href="/browse"
                   className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
                 >
                   Browse Items
@@ -169,13 +175,17 @@ export default function Landing() {
                 </Link>
                 <div className="flex flex-col space-y-2 pt-4">
                   <Button
+                    asChild
                     variant="outline"
-                    className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 bg-transparent focus-ring"
+                    className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 bg-transparent"
                   >
-                    Sign In
+                    <Link href="/sign-in">Sign In</Link>
                   </Button>
-                  <Button className="gradient-emerald hover:gradient-emerald-dark text-white focus-ring">
-                    Join ReWear
+                  <Button
+                    asChild
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  >
+                    <Link href="/sign-up">Join ReWear</Link>
                   </Button>
                 </div>
               </nav>
@@ -230,7 +240,7 @@ export default function Landing() {
                   <div className="absolute top-4 right-4 text-6xl font-bold text-emerald-100 dark:text-emerald-900/30 group-hover:text-emerald-200 dark:group-hover:text-emerald-800/50 transition-colors duration-300">
                     {step.step}
                   </div>
-                  <div className="w-16 h-16 gradient-emerald rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                     <step.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
@@ -254,7 +264,7 @@ export default function Landing() {
         setCurrentSlide={setCurrentSlide}
       />
       {/* CTA Section */}
-      <section className="py-20 gradient-emerald-dark text-white">
+      <section className="py-20 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
         <div className="container mx-auto px-4 lg:px-6 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-6">
             Ready to Transform Your Wardrobe?
@@ -265,17 +275,19 @@ export default function Landing() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
+              asChild
               size="lg"
-              className="bg-white text-emerald-600 hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 focus-ring"
+              className="bg-white text-emerald-600 hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
             >
-              Start Swapping Now
+              <Link href="/browse">Start Swapping Now</Link>
             </Button>
             <Button
+              asChild
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-emerald-600 transition-all duration-300 transform hover:scale-105 bg-transparent focus-ring"
+              className="border-2 border-white text-white hover:bg-white hover:text-emerald-600 transition-all duration-300 transform hover:scale-105 bg-transparent"
             >
-              List an Item
+              <Link href="/upload">List an Item</Link>
             </Button>
           </div>
         </div>

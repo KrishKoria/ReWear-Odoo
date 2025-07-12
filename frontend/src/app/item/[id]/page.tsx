@@ -22,6 +22,7 @@ import { authClient } from "@/lib/authclient";
 import Image from "next/image";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
+import Navigation from "@/components/navigation";
 
 interface Item {
   id: string;
@@ -211,31 +212,7 @@ export default function ItemDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => router.back()}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Button>
-              <Link
-                href="/landing"
-                className="text-2xl font-bold text-green-600 dark:text-green-400"
-              >
-                ReWear
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <ThemeToggle />
-              <Button asChild variant="outline">
-                <Link href="/dashboard">Dashboard</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navigation showBack={true} pageTitle="Item Details" />
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

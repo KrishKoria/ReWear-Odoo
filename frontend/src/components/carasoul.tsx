@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { ChevronLeft, ChevronRight, Heart, Star } from "lucide-react";
 
@@ -54,54 +55,53 @@ export default function Carasoul({
                     {featuredItems
                       .slice(slideIndex * 3, (slideIndex + 1) * 3)
                       .map((item) => (
-                        <Card
-                          key={item.id}
-                          className="overflow-hidden border-0 shadow-lg dark:shadow-emerald-900/20 hover:shadow-2xl dark:hover:shadow-emerald-900/30 transition-all duration-500 transform hover:scale-105 group bg-white dark:bg-gray-800 animate-scale-in"
-                        >
-                          <div className="relative">
-                            <Image
-                              src={item.image || "/placeholder.svg"}
-                              alt={item.title}
-                              width={300}
-                              height={300}
-                              className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
-                            <div className="absolute top-4 left-4">
-                              <Badge className="bg-white/90 dark:bg-gray-800/90 text-emerald-700 dark:text-emerald-300 hover:bg-white dark:hover:bg-gray-800">
-                                {item.category}
-                              </Badge>
-                            </div>
-                            <div className="absolute top-4 right-4">
-                              <button className="w-8 h-8 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-colors duration-300 focus-ring">
-                                <Heart className="w-4 h-4 text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-300" />
-                              </button>
-                            </div>
-                          </div>
-                          <CardContent className="p-6">
-                            <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">
-                              {item.title}
-                            </h3>
-                            <div className="flex justify-between items-center mb-4">
-                              <span className="text-sm text-gray-600 dark:text-gray-400">
-                                Size: {item.size}
-                              </span>
-                              <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">
-                                {item.condition}
-                              </span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                                {item.points} points
-                              </span>
-                              <div className="flex items-center space-x-1">
-                                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                                <span className="text-sm text-gray-600 dark:text-gray-400">
-                                  4.8
-                                </span>
+                        <Link key={item.id} href={`/item/${item.id}`}>
+                          <Card className="overflow-hidden border-0 shadow-lg dark:shadow-emerald-900/20 hover:shadow-2xl dark:hover:shadow-emerald-900/30 transition-all duration-500 transform hover:scale-105 group bg-white dark:bg-gray-800 animate-scale-in cursor-pointer">
+                            <div className="relative">
+                              <Image
+                                src={item.image || "/placeholder.svg"}
+                                alt={item.title}
+                                width={300}
+                                height={300}
+                                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                              />
+                              <div className="absolute top-4 left-4">
+                                <Badge className="bg-white/90 dark:bg-gray-800/90 text-emerald-700 dark:text-emerald-300 hover:bg-white dark:hover:bg-gray-800">
+                                  {item.category}
+                                </Badge>
+                              </div>
+                              <div className="absolute top-4 right-4">
+                                <button className="w-8 h-8 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-colors duration-300 focus-ring">
+                                  <Heart className="w-4 h-4 text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-300" />
+                                </button>
                               </div>
                             </div>
-                          </CardContent>
-                        </Card>
+                            <CardContent className="p-6">
+                              <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">
+                                {item.title}
+                              </h3>
+                              <div className="flex justify-between items-center mb-4">
+                                <span className="text-sm text-gray-600 dark:text-gray-400">
+                                  Size: {item.size}
+                                </span>
+                                <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+                                  {item.condition}
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                                  {item.points} points
+                                </span>
+                                <div className="flex items-center space-x-1">
+                                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                                    4.8
+                                  </span>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
                       ))}
                   </div>
                 </div>

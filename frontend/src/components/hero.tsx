@@ -1,6 +1,7 @@
 import { ArrowRight, Heart } from "lucide-react";
 import { Badge } from "./ui/badge";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "./ui/button";
 import { Item } from "@/db/types";
 
@@ -47,18 +48,22 @@ export default function Hero({ featuredItems, isVisible }: HeroProps) {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
+                asChild
                 size="lg"
                 className="gradient-emerald hover:gradient-emerald-dark text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group focus-ring"
               >
-                Start Swapping
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                <Link href="/browse">
+                  Start Swapping
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </Link>
               </Button>
               <Button
+                asChild
                 size="lg"
                 variant="outline"
                 className="border-2 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-300 transform hover:scale-105 bg-transparent focus-ring"
               >
-                Browse Items
+                <Link href="/upload">Browse Items</Link>
               </Button>
             </div>
 
