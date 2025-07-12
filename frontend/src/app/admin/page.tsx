@@ -7,14 +7,11 @@ import {
   Package,
   ShoppingCart,
   Trash2,
-  Edit,
-  Eye,
   Ban,
   CheckCircle,
   XCircle,
   UserCheck,
   UserX,
-  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 
