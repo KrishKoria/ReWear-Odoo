@@ -47,7 +47,13 @@ export default function Navigation({
       try {
         const session = await authClient.getSession();
         if (session.data) {
-          setUser(session.data.user);
+          const userResponse = await fetch(`/api/user/profile`);
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            setUser(userData.user);
+          } else {
+            setUser(session.data.user);
+          }
         }
       } catch (error) {
         console.error("Error checking auth:", error);
@@ -58,7 +64,6 @@ export default function Navigation({
 
     checkAuth();
   }, []);
-
   const handleSignOut = async () => {
     try {
       await authClient.signOut();
@@ -187,11 +192,14 @@ export default function Navigation({
                         <span>Dashboard</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
+                    {user?.role === "admin" && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin">
+                          <Settings className="mr-2 h-4 w-4" />
+                          <span>Admin Panel</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign out</span>
