@@ -1,87 +1,94 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { authClient } from "@/lib/authclient";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Recycle, Users, Shirt, Menu, X } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 import Hero from "@/components/hero";
 import Carasoul from "@/components/carasoul";
 import Footer from "@/components/footer";
 
-const featuredItems = [
-  {
-    id: 1,
-    title: "Vintage Denim Jacket",
-    size: "M",
-    condition: "Excellent",
-    points: 45,
-    image: "/placeholder.svg?height=300&width=250",
-    category: "Outerwear",
-  },
-  {
-    id: 2,
-    title: "Floral Summer Dress",
-    size: "S",
-    condition: "Like New",
-    points: 35,
-    image: "/placeholder.svg?height=300&width=250",
-    category: "Dresses",
-  },
-  {
-    id: 3,
-    title: "Designer Sneakers",
-    size: "9",
-    condition: "Good",
-    points: 55,
-    image: "/placeholder.svg?height=300&width=250",
-    category: "Shoes",
-  },
-  {
-    id: 4,
-    title: "Wool Sweater",
-    size: "L",
-    condition: "Excellent",
-    points: 40,
-    image: "/placeholder.svg?height=300&width=250",
-    category: "Knitwear",
-  },
-  {
-    id: 5,
-    title: "Leather Handbag",
-    size: "One Size",
-    condition: "Very Good",
-    points: 60,
-    image: "/placeholder.svg?height=300&width=250",
-    category: "Accessories",
-  },
-];
-
 export default function Landing() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [featuredItems, setFeaturedItems] = useState<any[]>([]);
 
   useEffect(() => {
     setIsVisible(true);
     const interval = setInterval(() => {
       setCurrentSlide(
-        (prev) => (prev + 1) % Math.ceil(featuredItems.length / 3)
+        (prev) => (prev + 1) % Math.ceil(featuredItems.length / 3 || 1)
       );
     }, 4000);
     return () => clearInterval(interval);
+  }, [featuredItems]);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const session = await authClient.getSession();
+        if (session.data) {
+          setUser(session.data.user);
+        }
+      } catch (error) {
+        setUser(null);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    const fetchFeaturedItems = async () => {
+      try {
+        const res = await fetch(
+          "/api/items?sortBy=pointValue&sortOrder=desc&limit=4"
+        );
+        if (res.ok) {
+          const data = await res.json();
+          console.log("API Response:", data);
+          const mapped = (data.items || []).map((item: any) => ({
+            id: item.id,
+            title: item.title || "Untitled",
+            size: item.size || "N/A",
+            condition: item.condition || "Unknown",
+            points: item.pointValue || 0,
+            image:
+              item.images && item.images.length > 0
+                ? item.images[0].startsWith("/uploads/")
+                  ? item.images[0]
+                  : `/uploads/${item.images[0]}`
+                : "/placeholder.svg?height=300&width=250",
+            category: item.categoryName || "Other",
+          }));
+          console.log("Mapped items:", mapped);
+          setFeaturedItems(mapped);
+        } else {
+          console.error("API Error:", res.status, res.statusText);
+          setFeaturedItems([]);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setFeaturedItems([]);
+      }
+    };
+    fetchFeaturedItems();
   }, []);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % Math.ceil(featuredItems.length / 3));
+    setCurrentSlide(
+      (prev) => (prev + 1) % Math.ceil(featuredItems.length / 3 || 1)
+    );
   };
 
   const prevSlide = () => {
     setCurrentSlide(
       (prev) =>
-        (prev - 1 + Math.ceil(featuredItems.length / 3)) %
-        Math.ceil(featuredItems.length / 3)
+        (prev - 1 + Math.ceil(featuredItems.length / 3 || 1)) %
+        Math.ceil(featuredItems.length / 3 || 1)
     );
   };
 
@@ -101,44 +108,54 @@ export default function Landing() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link
-                href="#how-it-works"
-                className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
-              >
-                How It Works
-              </Link>
-              <Link
-                href="/browse"
-                className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
-              >
-                Browse Items
-              </Link>
-              <Link
-                href="#community"
-                className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
-              >
-                Community
-              </Link>
-              <ThemeToggle />
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-              >
-                <Link href="/sign-in">Sign In</Link>
-              </Button>
-              <Button
-                asChild
-                size="sm"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white"
-              >
-                <Link href="/sign-up">Join ReWear</Link>
-              </Button>
+              {user ? (
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300 font-bold px-6 py-2 text-base"
+                >
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+              ) : (
+                <>
+                  <Link
+                    href="#how-it-works"
+                    className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
+                  >
+                    How It Works
+                  </Link>
+                  <Link
+                    href="/browse"
+                    className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
+                  >
+                    Browse Items
+                  </Link>
+                  <Link
+                    href="#community"
+                    className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
+                  >
+                    Community
+                  </Link>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                  >
+                    <Link href="/sign-in">Sign In</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="sm"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  >
+                    <Link href="/sign-up">Join ReWear</Link>
+                  </Button>
+                </>
+              )}
             </nav>
 
             <div className="md:hidden flex items-center space-x-2">
-              <ThemeToggle />
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors duration-300"
@@ -155,39 +172,51 @@ export default function Landing() {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-emerald-100 dark:border-emerald-800 animate-fade-in">
               <nav className="flex flex-col space-y-4">
-                <Link
-                  href="#how-it-works"
-                  className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
-                >
-                  How It Works
-                </Link>
-                <Link
-                  href="/browse"
-                  className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
-                >
-                  Browse Items
-                </Link>
-                <Link
-                  href="#community"
-                  className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
-                >
-                  Community
-                </Link>
-                <div className="flex flex-col space-y-2 pt-4">
+                {user ? (
                   <Button
                     asChild
-                    variant="outline"
-                    className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 bg-transparent"
+                    size="lg"
+                    className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300 font-bold px-6 py-2 text-base"
                   >
-                    <Link href="/sign-in">Sign In</Link>
+                    <Link href="/dashboard">Dashboard</Link>
                   </Button>
-                  <Button
-                    asChild
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                  >
-                    <Link href="/sign-up">Join ReWear</Link>
-                  </Button>
-                </div>
+                ) : (
+                  <>
+                    <Link
+                      href="#how-it-works"
+                      className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
+                    >
+                      How It Works
+                    </Link>
+                    <Link
+                      href="/browse"
+                      className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
+                    >
+                      Browse Items
+                    </Link>
+                    <Link
+                      href="#community"
+                      className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 font-medium"
+                    >
+                      Community
+                    </Link>
+                    <div className="flex flex-col space-y-2 pt-4">
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 bg-transparent"
+                      >
+                        <Link href="/sign-in">Sign In</Link>
+                      </Button>
+                      <Button
+                        asChild
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                      >
+                        <Link href="/sign-up">Join ReWear</Link>
+                      </Button>
+                    </div>
+                  </>
+                )}
               </nav>
             </div>
           )}

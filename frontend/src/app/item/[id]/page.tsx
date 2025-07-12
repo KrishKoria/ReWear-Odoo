@@ -17,7 +17,6 @@ import {
   Send,
   Coins,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { authClient } from "@/lib/authclient";
 import Image from "next/image";
 import Link from "next/link";

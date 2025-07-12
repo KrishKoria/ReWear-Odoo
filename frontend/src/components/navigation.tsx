@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { authClient } from "@/lib/authclient";
 import {
   Package,
@@ -78,7 +77,7 @@ export default function Navigation({
     <header className="border-b bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/80 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 flex-1 min-w-0">
+          <div className="flex items-center space-x-2 flex-shrink-0 min-w-fit">
             {showBack && (
               <Button variant="ghost" size="sm" onClick={() => router.back()}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -89,17 +88,14 @@ export default function Navigation({
               href="/landing"
               className="flex items-center space-x-2 group min-w-0"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Package className="w-5 h-5 text-white" />
-              </div>
               <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent truncate">
                 ReWear
               </span>
             </Link>
           </div>
           {user && (
-            <div className="flex-1 flex justify-center">
-              <nav className="hidden md:flex items-center space-x-6">
+            <div className="flex w-full justify-center items-center">
+              <nav className="hidden md:flex items-center space-x-8 justify-center w-auto">
                 <Link
                   href="/browse"
                   className={`transition-colors font-medium text-sm ${
@@ -156,9 +152,6 @@ export default function Navigation({
                   </Link>
                 </Button>
 
-                <ThemeToggle />
-
-                {/* Profile Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -208,7 +201,6 @@ export default function Navigation({
               </>
             ) : (
               <>
-                <ThemeToggle />
                 <Button asChild variant="outline" size="sm">
                   <Link href="/sign-in">Sign In</Link>
                 </Button>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { items } from "@/db/schema";
+import { items, categories } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { and, asc, desc, eq, ilike } from "drizzle-orm";
 import { ItemCondition, ItemSize } from "@/db/types";
@@ -59,8 +59,25 @@ export async function GET(request: NextRequest) {
     const sortColumn = sortColumns[sortBy] || items.createdAt;
 
     const itemsQuery = db
-      .select()
+      .select({
+        id: items.id,
+        title: items.title,
+        description: items.description,
+        condition: items.condition,
+        size: items.size,
+        brand: items.brand,
+        color: items.color,
+        pointValue: items.pointValue,
+        status: items.status,
+        images: items.images,
+        userId: items.userId,
+        categoryId: items.categoryId,
+        categoryName: categories.name,
+        createdAt: items.createdAt,
+        updatedAt: items.updatedAt,
+      })
       .from(items)
+      .leftJoin(categories, eq(items.categoryId, categories.id))
       .where(whereClause)
       .orderBy(sortOrder === "desc" ? desc(sortColumn) : asc(sortColumn))
       .limit(limit)
