@@ -135,7 +135,6 @@ export default function BrowsePage() {
       <Navigation pageTitle="Browse Items" />
 
       <main className="container mx-auto px-4 py-8">
-        {/* Search and Filters */}
         <div className="mb-8 space-y-4">
           <form onSubmit={handleSearch} className="flex gap-2">
             <div className="flex-1 relative">

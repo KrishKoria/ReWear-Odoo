@@ -20,18 +20,8 @@ import { toast } from "sonner";
 
 import { authClient } from "@/lib/authclient";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 import Navigation from "@/components/navigation";
 
@@ -127,7 +117,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -136,7 +126,7 @@ export default function DashboardPage() {
                       Total Swaps
                     </p>
                     <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {stats.swaps}
+                      {stats.swaps ?? 0}
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -153,7 +143,7 @@ export default function DashboardPage() {
                       Points Balance
                     </p>
                     <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {stats.points}
+                      {stats.points ?? 0}
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -170,28 +160,11 @@ export default function DashboardPage() {
                       My Items
                     </p>
                     <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {stats.items}
+                      {stats.items ?? 0}
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
                     <Shirt className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800 hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Favorites
-                    </p>
-                    <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {stats.favorites}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
-                    <Heart className="w-6 h-6 text-white" />
                   </div>
                 </div>
               </CardContent>
@@ -268,7 +241,6 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* Recent Activity */}
             <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800">
               <CardHeader>
                 <CardTitle className="flex items-center text-gray-900 dark:text-white">
@@ -297,9 +269,6 @@ export default function DashboardPage() {
                         className="border border-emerald-100 dark:border-emerald-800"
                       >
                         <CardContent className="flex items-center space-x-4 p-4">
-                          <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center">
-                            <Activity className="w-6 h-6 text-emerald-600" />
-                          </div>
                           <div className="flex-1">
                             <p className="font-semibold text-gray-900 dark:text-white">
                               {act.type}
@@ -320,7 +289,6 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          {/* Quick Actions */}
           <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-100 dark:border-emerald-800">
             <CardHeader>
               <CardTitle className="flex items-center text-gray-900 dark:text-white">

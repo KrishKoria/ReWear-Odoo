@@ -47,12 +47,12 @@ export async function GET(request: NextRequest) {
         and(eq(items.userId, session.user.id), eq(items.status, "swapped"))
       );
 
+    // Return stats matching frontend expectations
     const stats = {
-      totalItems: itemsCount[0]?.count || 0,
-      availableItems: availableItems[0]?.count || 0,
-      swappedItems: swappedItems[0]?.count || 0,
-      totalSwaps: swapsCount[0]?.count || 0,
-      pointBalance: pointBalance[0]?.total || 0,
+      swaps: swapsCount[0]?.count || 0,
+      points: pointBalance[0]?.total || 0,
+      items: itemsCount[0]?.count || 0,
+      favorites: 0, // Placeholder, implement favorites logic if needed
     };
 
     return NextResponse.json(stats);
